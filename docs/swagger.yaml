@@ -1,0 +1,79 @@
+definitions:
+  feed.category:
+    properties:
+      categories:
+        items:
+          type: string
+        type: array
+    type: object
+  feed.feedQuery:
+    properties:
+      query:
+        additionalProperties:
+          items:
+            type: string
+          type: array
+        type: object
+    type: object
+  feed.names:
+    properties:
+      names:
+        items:
+          type: string
+        type: array
+    type: object
+info:
+  contact: {}
+paths:
+  /newsFeed:
+    get:
+      consumes:
+      - application/json
+      description: Gets a list of all feeds
+      parameters:
+      - description: a map of sources to list of categories
+        in: body
+        name: query
+        schema:
+          $ref: '#/definitions/feed.feedQuery'
+      - description: "source\t\t\t\tof the feed"
+        in: query
+        name: source
+        type: string
+      - description: "category\tof\tthe\tfeed"
+        in: query
+        name: category
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: a list of feeds
+          schema:
+            $ref: '#/definitions/feed.feedQuery'
+        "404":
+          description: Not Found
+      summary: Gets a list of all feeds
+  /newsFeed/categories:
+    get:
+      description: Gets a list of all feed categories
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: a list of categories
+          schema:
+            $ref: '#/definitions/feed.category'
+      summary: Gets a list of all feed categories
+  /newsFeed/names:
+    get:
+      description: Gets a list of all feed names
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: a list of names
+          schema:
+            $ref: '#/definitions/feed.names'
+      summary: Gets a list of all feed names
+swagger: "2.0"
