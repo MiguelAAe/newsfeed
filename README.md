@@ -17,3 +17,30 @@ make build
 ```
 http://localhost:9200/swagger/index.html
 ```
+
+## Endpoint /newsFeed 
+```shell
+curl http://localhost:9200/newsFeed
+```
+
+### Query retrieval with Query Params 
+```shell
+curl http://localhost:9200/newsFeed?source=bbc&category=technology
+```
+
+### Using a complex query as a body request to get a more custom feed list
+
+```shell
+curl http://localhost:9200/newsFeed
+```
+body:
+```json
+{
+    "query":
+    {
+        "sky": ["entertainment"],
+        "bbc": ["technology", "politics"]
+    }
+}
+```
+
