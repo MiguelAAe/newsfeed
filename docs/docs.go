@@ -19,13 +19,39 @@ const docTemplate = `{
         "/newsFeed": {
             "get": {
                 "description": "Gets a list of all feeds",
-                "consumes": [
-                    "application/json"
-                ],
                 "produces": [
                     "application/json"
                 ],
                 "summary": "Gets a list of all feeds",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "source of the feed",
+                        "name": "source",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "category of the feed",
+                        "name": "category",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                }
+            },
+            "post": {
+                "description": "Post a query to get a list of all feeds",
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Post a query to get a list of all feeds",
                 "parameters": [
                     {
                         "description": "a map of sources to list of categories",
@@ -34,26 +60,11 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/feed.feedQuery"
                         }
-                    },
-                    {
-                        "type": "string",
-                        "description": "source\t\t\t\tof the feed",
-                        "name": "source",
-                        "in": "query"
-                    },
-                    {
-                        "type": "string",
-                        "description": "category\tof\tthe\tfeed",
-                        "name": "category",
-                        "in": "query"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "a list of feeds",
-                        "schema": {
-                            "$ref": "#/definitions/feed.feedQuery"
-                        }
+                        "description": "OK"
                     },
                     "404": {
                         "description": "Not Found"
@@ -70,10 +81,7 @@ const docTemplate = `{
                 "summary": "Gets a list of all feed categories",
                 "responses": {
                     "200": {
-                        "description": "a list of categories",
-                        "schema": {
-                            "$ref": "#/definitions/feed.category"
-                        }
+                        "description": "OK"
                     }
                 }
             }
@@ -87,27 +95,13 @@ const docTemplate = `{
                 "summary": "Gets a list of all feed names",
                 "responses": {
                     "200": {
-                        "description": "a list of names",
-                        "schema": {
-                            "$ref": "#/definitions/feed.names"
-                        }
+                        "description": "OK"
                     }
                 }
             }
         }
     },
     "definitions": {
-        "feed.category": {
-            "type": "object",
-            "properties": {
-                "categories": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "feed.feedQuery": {
             "type": "object",
             "properties": {
@@ -118,17 +112,6 @@ const docTemplate = `{
                         "items": {
                             "type": "string"
                         }
-                    }
-                }
-            }
-        },
-        "feed.names": {
-            "type": "object",
-            "properties": {
-                "names": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
                     }
                 }
             }

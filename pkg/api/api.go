@@ -20,6 +20,7 @@ func NewAPI(puller *rsspuller.Puller) *chi.Mux {
 
 	r.Route("/newsFeed", func(r chi.Router) {
 		r.Get("/", handler.GetAllFeed)
+		r.Post("/", handler.PostFeedQuery)
 		r.Get("/categories", handler.GetFeedCategories)
 		r.Get("/names", handler.GetFeedNames)
 	})

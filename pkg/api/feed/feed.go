@@ -11,50 +11,17 @@ type RSSFeed struct {
 	FeedService *rsspuller.Puller
 }
 
-type feedQuery struct {
-	Query map[string][]string
-}
-
 // GetAllFeed
 //
 //	@Summary		Gets a list of all feeds
 //	@Description	Gets a list of all feeds
-//	@Accept			json
 //	@Produce		json
-//	@Param			query		body		feedQuery	false	"a map of sources to list of categories"
-//	@Param			source		query		string		false	"source				of the feed"
-//	@Param			category	query		string		false	"category	of	the	feed"
-//	@Success		200			{object}	feedQuery	"a list of feeds"
+//	@Param			source		query	string	false	"source of the feed"
+//	@Param			category	query	string	false	"category of the feed"
+//	@Success		200
 //	@Failure		404
 //	@Router			/newsFeed [get]
 func (ws *RSSFeed) GetAllFeed(w http.ResponseWriter, r *http.Request) {
-	var content feedQuery
-
-	err := json.NewDecoder(r.Body).Decode(&content)
-	if err != io.EOF && err != nil {
-		// todo: log this on console
-		return
-	}
-
-	if content.Query != nil {
-		resp := ws.FeedService.SearchFeeds(content.Query)
-
-		if resp == nil {
-			w.Header().Add("Content-Type", "application/json")
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		w.Header().Add("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		err := json.NewEncoder(w).Encode(&resp)
-		if err != nil {
-			// log error
-			return
-		}
-		return
-	}
-
 	source := r.URL.Query().Get("source")
 	category := r.URL.Query().Get("category")
 
@@ -133,6 +100,48 @@ func (ws *RSSFeed) GetAllFeed(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+type feedQuery struct {
+	Query map[string][]string
+}
+
+// PostFeedQuery
+//
+//	@Summary		Post a query to get a list of all feeds
+//	@Description	Post a query to get a list of all feeds
+//	@Produce		json
+//	@Param			query	body	feedQuery	false	"a map of sources to list of categories"
+//	@Success		200
+//	@Failure		404
+//	@Router			/newsFeed [post]
+func (ws *RSSFeed) PostFeedQuery(w http.ResponseWriter, r *http.Request) {
+	var content feedQuery
+
+	err := json.NewDecoder(r.Body).Decode(&content)
+	if err != io.EOF && err != nil {
+		// todo: log this on console
+		return
+	}
+
+	if content.Query != nil {
+		resp := ws.FeedService.SearchFeeds(content.Query)
+
+		if resp == nil {
+			w.Header().Add("Content-Type", "application/json")
+			w.WriteHeader(http.StatusNotFound)
+			return
+		}
+
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusOK)
+		err := json.NewEncoder(w).Encode(&resp)
+		if err != nil {
+			// log error
+			return
+		}
+		return
+	}
+}
+
 type category struct {
 	Categories []string `json:"categories"`
 }
@@ -142,7 +151,7 @@ type category struct {
 //	@Summary		Gets a list of all feed categories
 //	@Description	Gets a list of all feed categories
 //	@Produce		json
-//	@Success		200	{object}	category	"a list of categories"
+//	@Success		200
 //	@Router			/newsFeed/categories [get]
 func (ws *RSSFeed) GetFeedCategories(w http.ResponseWriter, r *http.Request) {
 	resp := ws.FeedService.ListFeedCategories()
@@ -168,7 +177,7 @@ type names struct {
 //	@Summary		Gets a list of all feed names
 //	@Description	Gets a list of all feed names
 //	@Produce		json
-//	@Success		200	{object}	names	"a list of names"
+//	@Success		200
 //	@Router			/newsFeed/names [get]
 func (ws *RSSFeed) GetFeedNames(w http.ResponseWriter, r *http.Request) {
 	resp := ws.FeedService.ListFeedNames()
