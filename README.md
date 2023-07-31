@@ -18,7 +18,7 @@ make build
 http://localhost:9200/swagger/index.html
 ```
 
-## Endpoint /newsFeed 
+## Endpoint GET /newsFeed 
 ```shell
 curl http://localhost:9200/newsFeed
 ```
@@ -27,6 +27,8 @@ curl http://localhost:9200/newsFeed
 ```shell
 curl http://localhost:9200/newsFeed?source=bbc&category=technology
 ```
+
+## Endpoint POST /newsFeed
 
 ### Using a complex query as a body request to get a more custom feed list
 
