@@ -7,7 +7,8 @@ import (
 
 type Puller struct {
 	feedSources map[string]map[string]*Feed //map of source to map of category feed
-	feedNames   map[string]bool
+	initialised bool
+	stopped     bool
 	done        chan bool
 }
 
@@ -19,6 +20,7 @@ func NewPuller() *Puller {
 }
 
 func (p *Puller) Listen(feeds ...*Feed) error {
+	p.initialised = true
 	for _, feed := range feeds {
 		// populate the cancel channel
 		feed.done = p.done
@@ -181,5 +183,8 @@ func (p *Puller) ListFeedNames() []string {
 }
 
 func (p *Puller) Close() {
+	if p.initialised == false || p.stopped == false {
+		return
+	}
 	p.done <- true
 }
