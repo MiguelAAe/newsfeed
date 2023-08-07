@@ -1,11 +1,14 @@
 package main
 
 import (
-	"fmt"
+	"context"
 	"log"
 	"net/http"
 	"newsfeed/pkg/api"
 	"newsfeed/pkg/rsspuller"
+	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	_ "newsfeed/docs"
@@ -77,9 +80,34 @@ func main() {
 	}
 
 	router := api.NewAPI(pull)
-	log.Printf("Listening on Port:%s\n", "9200")
-	err = http.ListenAndServe(fmt.Sprintf(":%s", "9200"), router)
-	if err != nil {
-		log.Printf("err from router: %v\n", err)
+
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
+
+	srv := &http.Server{
+		Addr:    ":9200",
+		Handler: router,
 	}
+
+	go func() {
+		log.Printf("Server listening on %s\n", srv.Addr)
+		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+			log.Fatalf("listen: %s\n", err)
+		}
+	}()
+
+	// Wait for a signal to shutdown the server
+	sig := <-signalCh
+	log.Printf("Received signal: %v\n", sig)
+
+	// Create a context with a timeout
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
+
+	// Shutdown the server gracefully
+	log.Printf("Shutting down server gracefully")
+	if err := srv.Shutdown(ctx); err != nil {
+		log.Fatalf("Server shutdown failed: %v\n", err)
+	}
+	log.Printf("Successful server shutdown")
 }
