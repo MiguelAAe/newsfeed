@@ -118,7 +118,8 @@ func (ws *RSSFeed) PostFeedQuery(w http.ResponseWriter, r *http.Request) {
 
 	err := json.NewDecoder(r.Body).Decode(&content)
 	if err != io.EOF && err != nil {
-		// todo: log this on console
+		w.Header().Add("Content-Type", "application/json")
+		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
 
