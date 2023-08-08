@@ -160,23 +160,20 @@ func (p *Puller) ListFeedCategories() []string {
 		}
 	}
 
-	categoriesResp := make([]string, len(categoriesMap))
-	i := 0
+	categoriesResp := make([]string, 0, len(categoriesMap))
+
 	for keyName, _ := range categoriesMap {
-		categoriesResp[i] = keyName
-		i++
+		categoriesResp = append(categoriesResp, keyName)
 	}
 
 	return categoriesResp
 }
 
 func (p *Puller) ListFeedNames() []string {
-	sourceNames := make([]string, len(p.feedSources))
+	sourceNames := make([]string, 0, len(p.feedSources))
 
-	i := 0
 	for keyName, _ := range p.feedSources {
-		sourceNames[i] = keyName
-		i++
+		sourceNames = append(sourceNames, keyName)
 	}
 
 	return sourceNames
