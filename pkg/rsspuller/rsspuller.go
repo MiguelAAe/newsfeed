@@ -187,4 +187,5 @@ func (p *Puller) Close() {
 		return
 	}
 	p.done <- true
+	p.stopped = true
 }
